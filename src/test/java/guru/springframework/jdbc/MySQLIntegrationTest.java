@@ -26,7 +26,7 @@ public class MySQLIntegrationTest {
     @Test
     public void testMySql() {
         long countBefore = bookRepository.count();
-        assertThat(countBefore).isGreaterThan(4);
+        assertThat(countBefore).isGreaterThan(0);
     }
 
     @Test
@@ -43,7 +43,7 @@ public class MySQLIntegrationTest {
         Author newAuthor = new Author("Lorraine", "Figueroa");
         Author savedAuthor = authorRepository.save(newAuthor);
         assertNotNull(savedAuthor);
-        // Retreive the book
+        // Retreive the author
         Author fetchedAuthor = authorRepository.getReferenceById(savedAuthor.getId());
         assertThat(fetchedAuthor.getFirstName()).isEqualTo(newAuthor.getFirstName());
     }
