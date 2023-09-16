@@ -27,6 +27,8 @@ public class AuthorDaoImpl implements AuthorDao {
         try {
             connection = source.getConnection();
             statement = connection.createStatement();
+            // Add Database configuration so that "author" does not show up in red
+            // Note: I need to refresh to change colors
             resultSet = statement.executeQuery("SELECT * FROM " +
                     "author WHERE id = " + id);
 
