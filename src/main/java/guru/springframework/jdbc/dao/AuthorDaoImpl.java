@@ -4,10 +4,7 @@ import guru.springframework.jdbc.domain.Author;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @Component
 public class AuthorDaoImpl implements AuthorDao {
@@ -21,16 +18,15 @@ public class AuthorDaoImpl implements AuthorDao {
     @Override
     public Author getById(Long id) {
         Connection connection = null;
-        Statement statement = null;
+        PreparedStatement ps = null;
         ResultSet resultSet = null;
 
         try {
             connection = source.getConnection();
-            statement = connection.createStatement();
-            // Add Database configuration so that "author" does not show up in red
-            // Note: I need to refresh to change colors
-            resultSet = statement.executeQuery("SELECT * FROM " +
-                    "author WHERE id = " + id);
+
+            ps = connection.prepareStatement("SELECT * FROM author WHERE id = ?");
+            ps.setLong(1, id);
+            resultSet = ps.executeQuery();
 
             if (resultSet.next()) {
                 Author author = new Author();
@@ -46,8 +42,8 @@ public class AuthorDaoImpl implements AuthorDao {
                 if (resultSet != null) {
                     resultSet.close();
                 }
-                if (statement != null) {
-                    statement.close();
+                if (ps != null) {
+                    ps.close();
                 }
                 if (connection != null) {
                     connection.close();
