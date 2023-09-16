@@ -27,7 +27,8 @@ public class AuthorDaoImpl implements AuthorDao {
         try {
             connection = source.getConnection();
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM author WHERE id = " + id);
+            resultSet = statement.executeQuery("SELECT * FROM " +
+                    "author WHERE id = " + id);
 
             if (resultSet.next()) {
                 Author author = new Author();
@@ -38,6 +39,20 @@ public class AuthorDaoImpl implements AuthorDao {
             }
         } catch(SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (statement != null) {
+                    statement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
 
