@@ -58,4 +58,17 @@ public class AuthorDaoIntegrationTest {
 
         assertThat(updatedAuthor.getLastName()).isEqualTo("O'Neill");
     }
+
+    @Test
+    void testDeleteAuthor() {
+        Author author = new Author("Tom", "Rodriquez");
+        Author savedAuthor = authorDao.saveNewAuthor(author);
+
+        // Now let's delete
+        authorDao.deleteAuthorById(savedAuthor.getId());
+
+        // Check it actually worked
+        Author deletedAuthor = authorDao.getById(savedAuthor.getId());
+        assertThat(deletedAuthor).isNull();
+    }
 }

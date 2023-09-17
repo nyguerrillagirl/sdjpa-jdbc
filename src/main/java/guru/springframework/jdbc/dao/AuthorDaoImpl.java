@@ -56,7 +56,7 @@ public class AuthorDaoImpl implements AuthorDao {
         try {
             connection = source.getConnection();
 
-            ps = connection.prepareStatement("SELECT * FROM author WHERE first_name = ? and last_name= ?");
+            ps = connection.prepareStatement("SELECT * FROM author WHERE first_name = ? AND last_name= ?");
             ps.setString(1, firstName);
             ps.setString(2, lastName);
 
@@ -86,7 +86,7 @@ public class AuthorDaoImpl implements AuthorDao {
         try {
             connection = source.getConnection();
 
-            ps = connection.prepareStatement("INSERT INTO author (first_name, last_name) values (?, ?)");
+            ps = connection.prepareStatement("INSERT INTO author (first_name, last_name) VALUES (?, ?)");
             ps.setString(1, author.getFirstName());
             ps.setString(2, author.getLastName());
             ps.execute();
@@ -122,7 +122,7 @@ public class AuthorDaoImpl implements AuthorDao {
         ResultSet resultSet = null;
         try {
             connection = source.getConnection();
-            ps = connection.prepareStatement("UPDATE author SET first_name = ?, last_name = ? where author.id = ?");
+            ps = connection.prepareStatement("UPDATE author SET first_name = ?, last_name = ? WHERE author.id = ?");
             ps.setString(1, author.getFirstName());
             ps.setString(2, author.getLastName());
             ps.setLong(3, author.getId());
@@ -139,6 +139,27 @@ public class AuthorDaoImpl implements AuthorDao {
         }
         return getById(author.getId());
     }
+
+    @Override
+    public void deleteAuthorById(Long id) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        try {
+            connection = source.getConnection();
+            ps = connection.prepareStatement("DELETE FROM author WHERE author.id = ?");
+            ps.setLong(1, id);
+            ps.execute();
+        } catch(SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            closeAll(null, ps, connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
 
     private void closeAll(ResultSet resultSet, PreparedStatement ps, Connection connection) throws SQLException {
         if (resultSet != null) {
