@@ -2,6 +2,7 @@ package guru.springframework.jdbc;
 
 import guru.springframework.jdbc.dao.AuthorDao;
 import guru.springframework.jdbc.domain.Author;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 @ComponentScan(basePackages = {"guru.springframework.jdbc.dao"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
 public class AuthorDaoIntegrationTest {
 
     @Autowired
@@ -36,5 +38,13 @@ public class AuthorDaoIntegrationTest {
         assertThat(fetchedAuthor).isNotNull();
         Assertions.assertEquals("Eric", fetchedAuthor.getFirstName());
         Assertions.assertEquals("Evans", fetchedAuthor.getLastName());
+    }
+
+    @Test
+    void testSaveNewAuthorTest() {
+        Author newAuthor = new Author("Lorraine", "Figueroa");
+        Author savedAuthor = authorDao.saveNewAuthor(newAuthor);
+
+        assertThat(savedAuthor).isNotNull();
     }
 }

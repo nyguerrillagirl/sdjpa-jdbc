@@ -77,6 +77,44 @@ public class AuthorDaoImpl implements AuthorDao {
         return null;
     }
 
+    @Override
+    public Author saveNewAuthor(Author author) {
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet resultSet = null;
+        Statement statement = null;
+        try {
+            connection = source.getConnection();
+
+            ps = connection.prepareStatement("INSERT INTO author (first_name, last_name) values (?, ?)");
+            ps.setString(1, author.getFirstName());
+            ps.setString(2, author.getLastName());
+            ps.execute();
+
+            statement = connection.createStatement();
+            // This query will only work on MySQL
+            resultSet = statement.executeQuery("SELECT LAST_INSERT_ID()");
+
+            if (resultSet.next()) {
+                // Get the record - as in the database
+                Long savedId = resultSet.getLong(1);
+                return getById(savedId);
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (statement != null) {
+                    statement.close();
+                }
+                closeAll(resultSet, ps, connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     private void closeAll(ResultSet resultSet, PreparedStatement ps, Connection connection) throws SQLException {
         if (resultSet != null) {
             resultSet.close();
@@ -96,5 +134,6 @@ public class AuthorDaoImpl implements AuthorDao {
         author.setLastName(resultSet.getString("last_name"));
         return author;
     }
+
 
 }
