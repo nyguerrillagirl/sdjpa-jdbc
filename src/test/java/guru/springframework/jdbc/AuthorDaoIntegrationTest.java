@@ -39,12 +39,20 @@ public class AuthorDaoIntegrationTest {
         Assertions.assertEquals("Evans", fetchedAuthor.getLastName());
     }
 
+    private void cleanUpAuthor(Author author) {
+        try {
+            authorDao.deleteAuthorById(author.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Test
     void testSaveNewAuthor() {
         Author newAuthor = new Author("Lorraine", "Figueroa");
         Author savedAuthor = authorDao.saveNewAuthor(newAuthor);
 
         assertThat(savedAuthor).isNotNull();
+        cleanUpAuthor(savedAuthor);
     }
 
     @Test
@@ -57,6 +65,7 @@ public class AuthorDaoIntegrationTest {
         Author updatedAuthor = authorDao.updateAuthor(savedAuthor);
 
         assertThat(updatedAuthor.getLastName()).isEqualTo("O'Neill");
+        cleanUpAuthor(updatedAuthor);
     }
 
     @Test
