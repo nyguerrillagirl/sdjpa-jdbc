@@ -147,10 +147,10 @@ public class AuthorDaoImpl implements AuthorDao {
         if (ps != null) {
             ps.close();
         }
+
         if (connection != null) {
             connection.close();
         }
-
     }
     private Author getAuthorFromResultRS(ResultSet resultSet) throws SQLException {
         Author author = new Author();
