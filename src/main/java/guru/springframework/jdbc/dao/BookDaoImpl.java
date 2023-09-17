@@ -1,6 +1,5 @@
 package guru.springframework.jdbc.dao;
 
-import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.domain.Book;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +11,11 @@ public class BookDaoImpl implements BookDao {
 
     private final DataSource source;
 
-    public BookDaoImpl(DataSource source) {
+    private final AuthorDao authorDao;
+
+    public BookDaoImpl(DataSource source, AuthorDao authorDao) {
         this.source = source;
+        this.authorDao = authorDao;
     }
 
     @Override
@@ -84,7 +86,7 @@ public class BookDaoImpl implements BookDao {
 
             // Do we have 3 or 4 values to save?
             String sql = null;
-            if (book.getAuthorId() != null) {
+            if (book.getAuthor() != null) {
                  sql = "INSERT INTO book  (isbn, publisher, title, author_id) VALUES (?, ?, ?, ?)";
             } else {
                 System.out.println("===> requires 3 arguments");
@@ -95,8 +97,8 @@ public class BookDaoImpl implements BookDao {
             ps.setString(1, book.getIsbn());
             ps.setString(2, book.getPublisher());
             ps.setString(3, book.getTitle());
-            if (book.getAuthorId() != null) {
-                ps.setLong(4, book.getAuthorId());
+            if (book.getAuthor() != null) {
+                ps.setLong(4, book.getAuthor().getId());
             }
             ps.execute();
 
@@ -135,7 +137,9 @@ public class BookDaoImpl implements BookDao {
             ps.setString(1, book.getIsbn());
             ps.setString(2, book.getPublisher());
             ps.setString(3, book.getTitle());
-            ps.setLong(4, book.getAuthorId());
+            if (book.getAuthor() != null) {
+                ps.setLong(4, book.getAuthor().getId());
+            }
             ps.setLong(5, book.getId());
 
             ps.execute();
@@ -190,7 +194,8 @@ public class BookDaoImpl implements BookDao {
         book.setIsbn(resultSet.getString("isbn"));
         book.setPublisher(resultSet.getString("publisher"));
         book.setTitle(resultSet.getString("title"));
-        book.setAuthorId(resultSet.getLong("author_id"));
+        book.setAuthor(authorDao.getById(resultSet.getLong("author_id")));
+
         return book;
     }
 }

@@ -1,6 +1,8 @@
 package guru.springframework.jdbc;
 
+import guru.springframework.jdbc.dao.AuthorDao;
 import guru.springframework.jdbc.dao.BookDao;
+import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.domain.Book;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,9 @@ public class BookDaoIntegrationTest {
 
     @Autowired
     BookDao bookDao;
+
+    @Autowired
+    AuthorDao authorDao;
 
     private void cleanUpBook(Book book) {
         try {
@@ -54,7 +59,8 @@ public class BookDaoIntegrationTest {
     @Test
     void testSaveNewBook2() {
         Book newBook = new Book("978-1-83921-662-6", "Packt Publishing", "The C++ Workshop");
-        newBook.setAuthorId(1L);
+        Author author = authorDao.getById(1L);
+        newBook.setAuthor(author);
 
         Book savedBook = bookDao.saveNewBook(newBook);
 
@@ -69,12 +75,14 @@ public class BookDaoIntegrationTest {
         // First create a new author
         Book newBook = new Book("978-1-83921-662-6", "Packt Publishing", "The C++ Workshop");
         Book savedBook = bookDao.saveNewBook(newBook);
-        // After saving, update to a different last name
-        savedBook.setAuthorId(1L);
+
+        // After saving, set the author
+        Author bookAuthor = authorDao.getById(1L);
+        savedBook.setAuthor(bookAuthor);
 
         Book updatedBook = bookDao.updateBook(savedBook);
 
-        assertThat(updatedBook.getAuthorId()).isEqualTo(1L);
+        assertThat(updatedBook.getAuthor().getId()).isEqualTo(1L);
         cleanUpBook(updatedBook);
     }
 }
